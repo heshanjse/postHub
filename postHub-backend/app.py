@@ -1,5 +1,6 @@
 import sqlite3
-from flask import Flask, request
+from flask import request ,jsonify
+from flask import Flask, Response
 
 app = Flask(__name__)
 
@@ -12,19 +13,22 @@ def home():
 def add():
     if request.method == 'POST':
         try:
-            title = 'title'
-            body = request.form['body']
+            uid = 111
+            data = request.get_json()
+            body = data['body']
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("INSERT INTO POSTS (title, body) VALUES (?, ?)", (title, body))
+                cur.execute("INSERT INTO POSTS (UID, BODY) VALUES (?, ?)", (uid, body))
                 con.commit()
                 msg = "Record successfully added"
-        except:
+                return jsonify({'message': str(msg)}), 200
+        except Exception as e:            
             con.rollback()
             msg = "Error in insert operation"
+            return jsonify({'error': str(msg)}), 500
         finally:
             con.close()
-            return msg
+            # return jsonify({'error': str(msg)}), 500
             
 
 
@@ -37,7 +41,16 @@ def list():
     cur.execute("SELECT * FROM POSTS")
     rows = cur.fetchall()
     con.close()
-    return rows;
+
+    rows_as_dict = [dict(row) for row in rows]
+    print("-----------------");
+    print(rows_as_dict);
+    # sorted_rows_as_dict = sorted(rows_as_dict, key=lambda k: k['id'], reverse=True);
+    #take only body list
+    body_list = [i['BODY'] for i in rows_as_dict];
+    print(body_list)
+    return jsonify({'data': body_list}), 200
+
 
 
 # Route to update a record (update) in the database
@@ -45,12 +58,13 @@ def list():
 def update():
     if request.method == 'POST':
         try:
+            uid = 111
             id = request.form['id']
-            title = 'title'
             body = request.form['body']
+
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("UPDATE POSTS SET title=?, body=? WHERE id=?", (title, body, id))
+                cur.execute("UPDATE POSTS SET UID=?, BODY=? WHERE ID=?", (uid, body, id))
                 con.commit()
                 msg = "Record successfully updated"
         except:
@@ -65,19 +79,45 @@ def update():
 def delete():
     if request.method == 'POST':
         try:
-            id = request.form['id']
+            uid = 111
+            data = request.get_json()
+            id = data['id']
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("DELETE FROM POSTS WHERE id=?", (id))
+                cur.execute("DELETE FROM POSTS WHERE id=? AND uid=?", (id,uid))
                 con.commit()
                 msg = "Record successfully deleted"
+                return jsonify({'message': str(msg)}), 200
         except:
             con.rollback()
             msg = "Error in delete operation"
+            return jsonify({'error': str(msg)}), 500
         finally:
             con.close()
-            return msg
 
+
+
+# @app.route('/add', methods=['POST'])
+# def add():
+#     if request.method == 'POST':
+#         try:
+#             uid = 111
+#             data = request.get_json()
+#             body = data['body']
+#             with sqlite3.connect('database.db') as con:
+#                 cur = con.cursor()
+#                 cur.execute("INSERT INTO POSTS (UID, BODY) VALUES (?, ?)", (uid, body))
+#                 con.commit()
+#                 msg = "Record successfully added"
+#                 return jsonify({'message': str(msg)}), 200
+#         except Exception as e:            
+#             con.rollback()
+#             msg = "Error in insert operation"
+#             return jsonify({'error': str(msg)}), 500
+#         finally:
+#             con.close()
+#             # return jsonify({'error': str(msg)}), 500
+            
 
 
 
