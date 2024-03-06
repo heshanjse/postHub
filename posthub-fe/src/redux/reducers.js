@@ -1,5 +1,5 @@
 const initialState = {
-    messages: [],
+    messages: [{text:"hehsh",index:1}],
     filters : "ALL",
     searchMessage : ""
 
@@ -30,6 +30,12 @@ const messageReducer = (state = initialState, action) => {
             filters : state.filters,
             searchMessage : state.searchMessage
         }
+    case 'SEARCH_MESSAGE':
+      return {
+        messages: action.payload,
+        filters : state.filters,
+        searchMessage : state.searchMessage
+      }
     default:
       return state;
   }

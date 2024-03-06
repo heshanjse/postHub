@@ -41,15 +41,18 @@ def list():
     cur.execute("SELECT * FROM POSTS")
     rows = cur.fetchall()
     con.close()
-
     rows_as_dict = [dict(row) for row in rows]
-    print("-----------------");
-    print(rows_as_dict);
-    # sorted_rows_as_dict = sorted(rows_as_dict, key=lambda k: k['id'], reverse=True);
-    #take only body list
-    body_list = [i['BODY'] for i in rows_as_dict];
-    print(body_list)
-    return jsonify({'data': body_list}), 200
+
+    index = 0  
+    response_array = [] 
+    while index < len(rows_as_dict):
+        element = {}
+        row = rows_as_dict[index];
+        element['text'] = row['BODY']
+        element['index'] = row['ID']
+        response_array.append(element)
+        index = index + 1
+    return jsonify({'data': response_array}), 200
 
 
 
