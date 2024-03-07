@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { BsPlus } from "react-icons/bs";
+import { TbSend } from "react-icons/tb";
 import PostList from "./PostList";
 import { addMessage } from "../redux/action";
 import { apipost } from "../services/apiClient";
@@ -34,7 +35,7 @@ const Post = () => {
       <PostList />
       <div className="flex items-center mb-4">
         <input value={newPostText} onChange={(e) => setNewPostText(e.target.value)} type="text" name="addPostInput" className="flex-grow p-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500" id="addPostInput" placeholder="What's on your mind?" />
-        <button className="m1-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none" onClick={handleAddPostClick}><BsPlus /></button>
+        <button className="m1-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none" onClick={handleAddPostClick}><TbSend /></button>
       </div>
     </div>
   );
